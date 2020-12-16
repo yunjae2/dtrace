@@ -33,6 +33,18 @@ extern dtrace_lat_t *dtrace_lat;
 		dtrace_client_req();		\
 }
 
+#define DTRACE_CLIENT_REQ_POST()			\
+{							\
+	if (dtrace_client)				\
+		dtrace_client_req_post();		\
+}
+
+#define DTRACE_CLIENT_REPLY_GET()			\
+{							\
+	if (dtrace_client)				\
+		dtrace_client_reply_get();		\
+}
+
 #define DTRACE_CLIENT_REPLY()			\
 {							\
 	if (dtrace_client)				\
@@ -63,6 +75,16 @@ static inline void dtrace_client_req(void)
 	dtrace_lat->req = dtrace_get_ntime();
 }
 
+static inline void dtrace_client_req_post(void)
+{
+	dtrace_lat->req_post = dtrace_get_ntime();
+}
+
+static inline void dtrace_client_reply_get(void)
+{
+	dtrace_lat->reply_get = dtrace_get_ntime();
+}
+
 static inline void dtrace_client_reply(void)
 {
 	dtrace_lat->reply = dtrace_get_ntime();
@@ -77,6 +99,8 @@ static inline void dtrace_client_end(void)
 
 #define DTRACE_CLIENT_START()	do {} while (0)
 #define DTRACE_CLIENT_REQ()	do {} while (0)
+#define DTRACE_CLIENT_REQ_POST()	do {} while (0)
+#define DTRACE_CLIENT_REPLY_GET()	do {} while (0)
 #define DTRACE_CLIENT_REPLY()	do {} while (0)
 #define DTRACE_CLIENT_END()	do {} while (0)
 
