@@ -1,6 +1,7 @@
 #ifndef __DT_COMMON_H__
 #define __DT_COMMON_H__
 
+#include <stdio.h>
 #include <time.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -13,6 +14,10 @@
 #endif
 #ifndef NSEC_PER_USEC
 #define NSEC_PER_USEC 1000
+#endif
+
+#ifndef D_ERROR
+#define D_ERROR(...)	fprintf(stderr, __VA_ARGS__)
 #endif
 
 static inline uint64_t dtrace_get_ntime(void)
