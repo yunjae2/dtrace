@@ -1,0 +1,85 @@
+#ifndef __DT_CLIENT_H__
+#define __DT_CLIENT_H__
+
+#include <dt_common.h>
+
+/* Client tracer */
+
+#define DTRACE_CLIENT		1
+
+typedef struct {
+	uint64_t start;
+	uint64_t req;
+	uint64_t req_post;
+	uint64_t reply;
+	uint64_t reply_get;
+	uint64_t end;
+} dtrace_lat_t;
+
+extern bool dtrace_client;
+extern dtrace_lat_t *dtrace_lat;
+
+#if DTRACE_CLIENT
+
+#define DTRACE_CLIENT_START()			\
+{							\
+	if (dtrace_client)				\
+		dtrace_client_start();		\
+}
+
+#define DTRACE_CLIENT_REQ()			\
+{							\
+	if (dtrace_client)				\
+		dtrace_client_req();		\
+}
+
+#define DTRACE_CLIENT_REPLY()			\
+{							\
+	if (dtrace_client)				\
+		dtrace_client_reply();		\
+}
+
+#define DTRACE_CLIENT_END()			\
+{							\
+	if (dtrace_client)				\
+		dtrace_client_end();		\
+}
+
+static inline void dtrace_client_start(void)
+{
+	if (!dtrace_lat) {
+		dtrace_client = false;
+		return;
+	}
+
+	dtrace_lat->start = dtrace_get_ntime();
+	dtrace_lat->req = -1;
+	dtrace_lat->reply = -1;
+	dtrace_lat->end = -1;
+}
+
+static inline void dtrace_client_req(void)
+{
+	dtrace_lat->req = dtrace_get_ntime();
+}
+
+static inline void dtrace_client_reply(void)
+{
+	dtrace_lat->reply = dtrace_get_ntime();
+}
+
+static inline void dtrace_client_end(void)
+{
+	dtrace_lat->end = dtrace_get_ntime();
+}
+
+#else
+
+#define DTRACE_CLIENT_START()	do {} while (0)
+#define DTRACE_CLIENT_REQ()	do {} while (0)
+#define DTRACE_CLIENT_REPLY()	do {} while (0)
+#define DTRACE_CLIENT_END()	do {} while (0)
+
+#endif
+
+#endif /* __DT_CLIENT_H__ */
